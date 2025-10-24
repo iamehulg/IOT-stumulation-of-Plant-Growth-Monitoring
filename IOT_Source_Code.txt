@@ -1,0 +1,45 @@
+#include <LiquidCrystal.h>
+#include "DHT.h"
+
+#define DHTPIN 2
+#define DHTTYPE DHT11
+#define SOIL_PIN A0
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  lcd.begin(16, 2);
+  Serial.begin(9600);
+  dht.begin();
+  lcd.print("Plant Monitor");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature(); // Air temperature
+  int soilMoisture = analogRead(SOIL_PIN);
+  int moisturePercent = map(soilMoisture, 1023, 0, 0, 100);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Temp:");
+  lcd.print(temperature);
+  lcd.print("C ");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Soil:");
+  lcd.print(moisturePercent);
+  lcd.print("% ");
+
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.print("%  Temp: ");
+  Serial.print(temperature);
+  Serial.print("C  Soil: ");
+  Serial.print(moisturePercent);
+  Serial.println("%");
+
+  delay(2000);
+}
